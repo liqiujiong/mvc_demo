@@ -7,9 +7,67 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>图书信息管理</title>
 <script language="javascript">
+function serialize(form) {
+    var parts = [],
+            elems = form.elements,
+            i = 0,
+            len = elems.length,
+            filed = null;
+    for (; i < len; i++) {
+        filed = elems[i];
+        switch (filed.type) {
+            case "select-one":
+            case "select-multiple":
+                if (filed.name.length) {
+                    var j = 0,
+                            opt,
+                            optLen = filed.options.length;
+                    for (; j < optLen; j++) {
+                        opt = filed.options[j];
+                        if (opt.selected) {
+                            parts.push(encodeURIComponent(filed.name) + "=" + encodeURIComponent(opt.value));
+                        }
+                    }
+                }
+                break;
+            case undefined:
+            case "submit":
+            case "reset":
+            case "file":
+            case "button":
+                break;
+            case "radio":
+            case "checkbox":
+                if (!filed.checked) {
+                    break;
+                }
+            default:
+                if (filed.name.length && filed.value) {
+                    parts.push(encodeURIComponent(filed.name) + "=" + encodeURIComponent(filed.value));
+                }
+        }
+    }
+    return parts.join("&");
+}
+function BookAjax(){
+	var request = new XMLHttpRequest();
+	request.open("POST","BookInfoServlet");
+	var data = serialize(document.getElementById("bookform"));
+	request.setRequestHeader("Content-type","application/x-www-form-urlencoded;charset=utf-8");
+	request.send(data);
+	request.onreadystatechange = function(){
+		if(request.readyState == 4){
+			if(request.status == 200){
+				document.getElementById("tab").innerHTML = request.responseText;
+			}else{
+				alert("发生错误"+request.status);
+			}
+		}
+	}
+}
 function look(){
 	document.forms[0].formAction.value="look";
-	document.forms[0].submit();
+	BookAjax();
 }
 function del(){
 	if(document.forms[0].bookid.value==""&&document.forms[0].bookname.value=="")
@@ -18,7 +76,7 @@ function del(){
 		return false;
 	}
 	document.forms[0].formAction.value="del";
-	document.forms[0].submit();
+	BookAjax();
 }
 function update(){
 	if(document.forms[0].bookid.value=="")
@@ -42,7 +100,7 @@ function update(){
 		return false;
 	}
 	document.forms[0].formAction.value="update";
-	document.forms[0].submit();
+	BookAjax();
 }
 function add(){
 	if(document.forms[0].bookname.value=="")
@@ -61,42 +119,27 @@ function add(){
 		return false;
 	}
 	document.forms[0].formAction.value="add";
-	document.forms[0].submit();
+	BookAjax();
 }
 </script>
 </head>
 <body>
-<%
-List<BookInfo> list=(List)request.getAttribute("booklist");
-if(null==list) list=new ArrayList<BookInfo>();
-BookInfo entity=(BookInfo)request.getAttribute("book");
-if(null==entity) entity=new BookInfo();
-%>
+
 <div align="center"> 
   <h2>图书操作</h2>
- <form action="<%=request.getContextPath() %>/BookInfoServlet" method="post">
+ <form id="bookform">
   <input type="hidden" name="formAction" value="">
- 图书ID：<input type="text" name="bookid" value="<%=entity.getBookid()>0?entity.getBookid():""%>">
- 图书名称：<input type="text" name="bookname"value="<%=entity.getBookname()==null?"":entity.getBookname()%>"><br>
- 出版社：<input type="text" name="publisher" value="<%=entity.getPublisher()==null?"":entity.getPublisher()%>">
- 图书价格：<input type="text" name="price" value="<%=entity.getPrice()>0?entity.getPrice():""%>"><br>
+ 图书ID：<input type="text" name="bookid" value="">
+ 图书名称：<input type="text" name="bookname"value=""><br>
+ 出版社：<input type="text" name="publisher" value="">
+ 图书价格：<input type="text" name="price" value=""><br>
  <input type="button" value="查询" onclick="return look();"/>
   <input type="button" value="删除" onclick="return del();"/>
    <input type="button" value="修改" onclick="return update();"/>
     <input type="button" value="添加" onclick="return add();"/>
 </form>
 <h3>数据记录显示</h3>
-<table border=1 width='80%'>
-<tr><th>ID</th><th>图书名称</th><th>出版社</th><th>图书价格</th></tr>
-<% for(int i=0;i<list.size();i++) {
-	BookInfo book=list.get(i);%>
-<tr>
-<td><%=book.getBookid() %></td>
-<td><%=book.getBookname() %></td>
-<td><%=book.getPublisher()%></td>
-<td><%=book.getPrice() %></td>
-</tr>
-<%} %>
+<div id="tab"></div>
 </table>
 </div>
 </body>

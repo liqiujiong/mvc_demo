@@ -1,15 +1,13 @@
 package com.servlet;
-
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import com.dao.BookInfoDao;
 import com.model.BookInfo;
 
@@ -35,9 +33,10 @@ public class BookInfoServlet extends HttpServlet {
     	if(null!=request.getParameter("bookid")&&!request.getParameter("bookid").equals(""))
     	bookid=Integer.parseInt(request.getParameter("bookid"));
     	String bookname=request.getParameter("bookname");
-        if(null!=bookname) bookname=new String(bookname.getBytes("iso-8859-1"),"utf-8");
+        //if(null!=bookname) bookname=new String(bookname.getBytes("iso-8859-1"),"utf-8");
          String publisher=request.getParameter("publisher");
-        if(null!=publisher)  publisher=new String(publisher.getBytes("iso-8859-1"),"utf-8");
+         System.out.println(publisher+bookname);
+        //if(null!=publisher)  publisher=new String(publisher.getBytes("iso-8859-1"),"utf-8");
          float price=0;
          if(null!=request.getParameter("price")&&!request.getParameter("price").equals(""))
          price=Float.parseFloat(request.getParameter("price"));
@@ -68,6 +67,7 @@ public class BookInfoServlet extends HttpServlet {
 		if(action.equals("update")){
 			BookInfoDao.getInstance().update(entity);
 		}
+		//根据id进行删除
 		if(action.equals("del")){
 			if(entity.getBookid()>0)BookInfoDao.getInstance().del(entity.getBookid());
 			if(null!=entity.getBookname()&&entity.getBookname().length()>0)
@@ -77,14 +77,21 @@ public class BookInfoServlet extends HttpServlet {
 	
 		//System.out.println(action+":"+entity.getBookid());
 		list=BookInfoDao.getInstance().Select(entity);
-		request.setAttribute("booklist", list);
-		if(action.equals("look")){
-			if(entity.getBookid()>0&&list.size()>0)
-			request.setAttribute("book", list.get(0));
+		response.setCharacterEncoding("utf-8");
+		PrintWriter out=response.getWriter();
+		StringBuffer sb = new StringBuffer();
+		sb.append("<table border=1 width='80%'>\r\n" + "<tr><th>ID</th><th>图书名称</th><th>出版社</th><th>图书价格</th></tr>");
+		for(int i = 0; i < list.size();i++) {
+			sb.append("<tr>\r\n" +
+						"<td>"+list.get(i).getBookid()+ "</td>\r\n" +
+						"<td>"+list.get(i).getBookname()+ "</td>\r\n" +
+						"<td>"+list.get(i).getPublisher()+ "</td>\r\n" +
+						"<td>"+list.get(i).getPrice()+ "</td>\r\n" +
+						"</tr>\r\n");
 		}
-		RequestDispatcher rd;
-		rd = request.getRequestDispatcher("BookInfo.jsp");
-		rd.forward(request, response);
+		sb.append("</table>");
+		out.write(sb.toString());
+		out.close();
 	}
 
 	/**
