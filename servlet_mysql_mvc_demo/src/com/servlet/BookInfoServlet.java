@@ -75,7 +75,11 @@ public class BookInfoServlet extends HttpServlet {
 				BookInfoDao.getInstance().del(entity.getBookname());
 			entity=null;
 		}
-		list=BookInfoDao.getInstance().Select(entity);
+		int curPage = Integer.parseInt(request.getParameter("curPage"));	//1
+		int pageSize = Integer.parseInt(request.getParameter("pageSize"));	//5
+		int begin=(curPage-1)*pageSize;		//起始为0
+		int total = BookInfoDao.getInstance().total(entity);	//获取记录总数
+		list=BookInfoDao.getInstance().Select(entity,begin,pageSize);
 		
 		JSONArray ja = new JSONArray();
 		for(int i = 0; i < list.size();i++) {
@@ -86,9 +90,12 @@ public class BookInfoServlet extends HttpServlet {
 			jb.put("Publisher", list.get(i).getPublisher());
 			ja.add(jb);
 		}
+		JSONObject obj = new JSONObject();
+		obj.put("book_list", ja);
+		obj.put("sum", total);
 		response.setContentType("application/json;charset=utf-8");
 		PrintWriter out=response.getWriter();
-		out.print(ja.toString());
+		out.print(obj.toString());
 		out.flush();
 		out.close();
 	}

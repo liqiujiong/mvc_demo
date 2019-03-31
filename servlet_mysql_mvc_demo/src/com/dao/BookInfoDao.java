@@ -103,7 +103,7 @@ public class BookInfoDao  extends BaseDAO{
     	addId(entity);
     }
     /*查询*/
-    public List<BookInfo> Select(BookInfo entity){
+    public List<BookInfo> Select(BookInfo entity,int begin,int pageSize){
     	if(null==entity)entity=new BookInfo();
     	Connection conn = super.getConn();
     	Statement pstmt = null;
@@ -117,6 +117,7 @@ public class BookInfoDao  extends BaseDAO{
     		sql+=" and bookname like '%"+entity.getBookname()+"%'";
     	if(null!=entity.getPublisher()&&entity.getPublisher().length()>0)
     		sql+=" and Publisher like '%"+entity.getPublisher()+"%'";
+    	sql += " limit "+begin+", "+pageSize;
     	try {
 			pstmt = conn.createStatement();
 			rs = pstmt.executeQuery(sql);
@@ -131,5 +132,36 @@ public class BookInfoDao  extends BaseDAO{
 		}
     	//System.out.println(sql);
     	return booklist;
+    }
+    /*
+     * 获取记录总数
+     */
+    public int total(BookInfo entity) {
+    	int total = 0;
+    	if(null==entity) entity=new BookInfo();
+    	Connection conn = super.getConn();
+    	Statement pstmt = null;
+    	ResultSet rs = null;
+    	BookInfo book=null;
+    	String sql = "select count(*) from bookinfo where 1=1 ";
+		if(entity.getBookid()>0)
+    		sql+="and bookid="+entity.getBookname();
+    	if(null!=entity.getBookname()&&entity.getBookname().length()>0)
+    		sql+=" and bookname like '%" + entity.getBookname()+"%'";
+    	if(null!=entity.getPublisher()&&entity.getPublisher().length()>0)
+    		sql+=" and Publisher like '%" + entity.getPublisher()+"%'";
+    	try {
+    		pstmt = conn.createStatement();
+    		rs = pstmt.executeQuery(sql);
+    		if(rs.next()) {
+    			total = rs.getInt(1);
+    		}
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}finally {
+    		super.closeConn(conn, pstmt, rs);
+    	}
+		return total;
+    	
     }
 }
