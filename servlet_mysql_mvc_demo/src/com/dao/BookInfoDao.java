@@ -110,7 +110,7 @@ public class BookInfoDao  extends BaseDAO{
     	ResultSet rs = null;
     	BookInfo book=null;
     	List<BookInfo> booklist=new ArrayList<BookInfo>();
-    	String sql = "select * from bookinfo where 1=1 ";
+    	String sql = "select * from bookinfo where 1=1 order by BookId ";
     	if(entity.getBookid()>0)
     		sql+="and bookid="+entity.getBookid();
     	if(null!=entity.getBookname()&&entity.getBookname().length()>0)
