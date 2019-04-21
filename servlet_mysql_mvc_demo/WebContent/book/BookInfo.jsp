@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@ page import="java.util.*,com.model.*"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -78,6 +78,7 @@ function add(){
  <form id="bookform" action="<%=request.getContextPath() %>/BookInfoServlet" method="post">
   <input type="hidden" name="formAction" id="formAction" value="">
   <input type="hidden" name="curPage" id="curPage" value="">
+  <input type="hidden" id="str_bookcheck" name="str_bookcheck" value="">
   <input type="hidden" name="pageSize" id="pageSize" value="">
  图书ID：<input type="text" name="bookid" id="bookid" value="">
  图书名称：<input type="text" name="bookname" id="bookname" value=""><br>

@@ -75,6 +75,18 @@ public class BookInfoServlet extends HttpServlet {
 				BookInfoDao.getInstance().del(entity.getBookname());
 			entity=null;
 		}
+		
+		//删除全部
+		if(action.equals("delall")) {
+			String bookids = request.getParameter("str_bookcheck");
+			if(null != bookids&&bookids.length()>0) {
+				bookids=bookids.substring(1);
+				System.out.println("删除："+bookids);
+				BookInfoDao.getInstance().delall(bookids);
+				entity=null;
+			}
+		}
+		
 		int curPage = Integer.parseInt(request.getParameter("curPage"));	//1
 		int pageSize = Integer.parseInt(request.getParameter("pageSize"));	//5
 		int begin=(curPage-1)*pageSize;		//起始为0

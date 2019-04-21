@@ -97,6 +97,24 @@ public class BookInfoDao  extends BaseDAO{
 		}
     //	System.out.println(sql);
     }
+    /*
+     * É¾³ýÈ«²¿
+     * */
+    public void delall(String bookids) {
+    	Connection conn = super.getConn();
+    	Statement stmt = null;
+    	String sql = "delete from bookinfo where bookid in("+bookids+")";
+    	try {
+    		stmt = conn.createStatement();
+    		stmt.execute(sql);
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}finally {
+    		super.closeConn(conn,stmt,null);
+    	}
+    }
+    
+    
     /*ÐÞ¸Ä*/
     public void update(BookInfo entity){
     	del(entity.getBookid());
