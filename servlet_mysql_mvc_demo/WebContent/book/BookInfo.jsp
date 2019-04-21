@@ -6,9 +6,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>图书信息管理</title>
-<link href="css/pages.css" rel="stylesheet">
-<script type="text/javascript" src="js/jquery-2.0.3.js"></script>
-<script type="text/javascript" src="js/pages.js"></script>
+<link href="../css/pages.css" rel="stylesheet">
+<script type="text/javascript" src="../js/jquery-2.0.3.js"></script>
+<script type="text/javascript" src="../js/pages.js"></script>
 <script language="javascript">
 function look(){
 	$("#formAction").val("look");
